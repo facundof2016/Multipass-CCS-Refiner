@@ -8,7 +8,7 @@
 # Additionally, this application would not have been possible without the greater R community who have been cited in the introduction tab of the R Shiny application.
 
 # For users inexperienced with coding or the R language this application is hosted online through Shinyapps.io 
-# at https://ericgier.shinyapps.io/multipass_ccs_refiner_segmented_code/
+# at https://ericgier.shinyapps.io/Multipass-CCS-Refiner/
 # In order to use this application locally, this script can be saved to your computer and run by pressing the Run App button at the top of the console.
 # Running locally will require the packages listed below. These can be downloaded by copying the line of code below directly into the R Console.
 # install.packages("shiny"), install.packages("shinythemes"), install.packages("bslib"), install.packages("shinyjs"), install.packages("shinyBS"), install.packages("DT"), install.packages("xlsx"), install.packages("ggplot2"), install.packages("png"), install.packages("dplyr")
