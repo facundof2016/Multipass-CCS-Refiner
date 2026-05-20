@@ -8,12 +8,11 @@
 # Additionally, this application would not have been possible without the greater R community who have been cited in the introduction tab of the R Shiny application.
 
 # For users inexperienced with coding or the R language this application is hosted online through Shinyapps.io 
-# at https://ericgier.shinyapps.io/Multipass-CCS-Refiner/
+# at https://ericgier.shinyapps.io/multipass_ccs_refiner_segmented_code/
 # In order to use this application locally, this script can be saved to your computer and run by pressing the Run App button at the top of the console.
 # Running locally will require the packages listed below. These can be downloaded by copying the line of code below directly into the R Console.
-# install.packages("shiny"), install.packages("shinythemes"), install.packages("bslib"), install.packages("shinyjs"), install.packages("shinyBS"), install.packages("DT"), install.packages("xlsx"), install.packages("ggplot2"), install.packages("png"), install.packages("dplyr")
+# install.packages("shiny"), install.packages("shinythemes"), install.packages("bslib"), install.packages("shinyjs"), install.packages("shinyBS"), install.packages("DT"), install.packages("readxl"), install.packages("ggplot2"), install.packages("viridisLite"), install.packages("clipr")
 # Neither these packages nor R itself need to be installed to run this application online.
-
 # Broadly, this code is divided into three sections. 
 #  1. Defining Functions - Home to all calculation, plotting and file sanitation functions.
 #  2. User Interface - The graphical user interface for collecting user input.
@@ -44,15 +43,31 @@
 
 # End of Data Uploading
 
+# Temporary directory safeguard (Infinite loops for file uploads can occasionally occur following windows updates)
+tmp_base <- Sys.getenv("LOCALAPPDATA")
+tmp_r <- file.path(tmp_base, "R_tmp")
+
+if (!dir.exists(tmp_r)) {
+  dir.create(tmp_r, recursive = TRUE, showWarnings = FALSE)
+}
+
+Sys.setenv(
+  TMPDIR = tmp_r,
+  TEMP   = tmp_r,
+  TMP    = tmp_r
+)
 # Handle the newest version of Rcpp from the packages.R script
-# Many packages in RShiny are dependent on Rcpp so it is recommended to update before publishing an application online.
-# The packages.R script will do this automatically before each upload but is not required for regular use.
-# source("Rcpp.R")
+# This is a known bug for windows specific systmes and has since been rectified.
+# source("packages.R")
+
+# This has been replaced with a one-time check for Rcpp
+
+if (!requireNamespace("Rcpp", quietly = TRUE)) {
+  install.packages("Rcpp", type = "binary")
+}
 
 #### Installing Packages and Importing Libraries ####
 # There are a number of packages and libraries used throughout this program. If you have not already you will need to install the packages listed below.
-# Packages can be installed by copying the line below directly into the console as a single or separate lines of code.
-# install.packages("shiny"), install.packages("shinythemes"), install.packages("bslib"), install.packages("shinyjs"), install.packages("shinyBS"), install.packages("DT"), install.packages('xlsx'), install.packages("ggplot2"), install.packages("png"), install.packages("clipr"), install.packages("viridis")
 
 # Some packages come with start up messages which I have chosen to suppress.
 # Import Shiny libraries 
@@ -64,21 +79,21 @@ library(shinyBS)
 
 # Import libraries for general functionality. 
 suppressPackageStartupMessages(library(DT))
-library(readxl) 
-library(xlsx)
+library(readxl)
 library(DT)
 library(ggplot2) 
 library(grid)
 library(viridisLite)
-
+# library(minpack.lm) # used in testing unreleased features
 # End importing libraries and installing packages.
 #### Clear Previous Data and Graphing Space ####
 # Ensure all old variables and the graphing space are cleared prior to running.
-rm(list = ls())
-graphics.off()
+# rm(list = ls())
+# graphics.off()
 
 # Optional toggle for warning messages
-options(warn = -1) # set to 0 to see warning messages
+# options(warn = -1) # set to 0 to see warning message
+
 # End Cleaning
 #### Source external files for UI, server, and functions ####
 source("functions.R")
